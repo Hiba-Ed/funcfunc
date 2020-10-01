@@ -1,0 +1,36 @@
+version: '3.2'
+services:
+  api:
+    container_name: "adonis-nodejs"
+    build:
+      context: .
+      dockerfile: ../Dockerfile
+    environment:
+      - NODE_ENV=dev
+      - WAIT_HOSTS=mysql:3306
+    volumes:
+      - .:/ucode
+      - /ucode/node_modules
+    ports:
+      - "3333:3333"
+    networks:
+      - default
+    depends_on:
+      - mysql
+  mysql:
+    container_name: "adonis-mysql"
+    image: mysql:5.7
+    volumes:
+      - "./data/:/var/lib/mysql"
+    ports:
+      - "3306:3306"
+    networks:
+      - default
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+
+#define network
+networks:
+  default:
+    driver: bridge
